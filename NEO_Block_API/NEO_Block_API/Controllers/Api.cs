@@ -129,7 +129,6 @@ namespace NEO_Block_API.Controllers
                         result = getJAbyKV("addrcount", mh.GetDataCount(mongodbConnStr, mongodbDatabase, "address"));
                         break;
                     case "getblock":
-                       //  findFliter = "{index:" + req.@params[0] + "}";
                         result = msq.GetBlock(req);
                         break;
                     case "getblocktime":
@@ -139,7 +138,7 @@ namespace NEO_Block_API.Controllers
 						result = msq.GetBlockCount(req);
 						break;
 					case "getblocks":
-						//sortStr = "{index:-1}";
+					
 						result = msq.GetBlocks(req);
 						break;
 					case "getblockbysize":
@@ -166,21 +165,26 @@ namespace NEO_Block_API.Controllers
                         sortStr = "{'lastuse.blockindex' : -1,'lastuse.txid' : -1}";
                         result = mh.GetDataPages(mongodbConnStr, mongodbDatabase, "address", sortStr, int.Parse(req.@params[0].ToString()), int.Parse(req.@params[1].ToString()));
                         break;
-                    case "getaddr":
+                    case "getaddress":
                         //string addr = req.@params[0].ToString();
                        
                         result = msq.GetAddress(req);
                         break;
+					case "getaddr":
+						//string addr = req.@params[0].ToString();
+
+						result = msq.GetAddr(req);
+						break;
 					case "getaddrs":
 						//string addr = req.@params[0].ToString();
 
 						result = msq.GetAddrs(req);
 						break;
 
-					case "getaddrstxs":
+					case "getaddresstxs":
 						//string addr = req.@params[0].ToString();
 
-						result = msq.GetAddrsTxs(req);
+						result = msq.GetAddressTxs(req);
 						break;
 					case "getaddrcount":
 						//string addr = req.@params[0].ToString();
@@ -209,50 +213,53 @@ namespace NEO_Block_API.Controllers
 						result = msq.GetAsset(req);
 						break;
                     case "getallasset":
-						// findFliter = "{}";
 						result = msq.GetAllAsset(req);
 						break;
                     case "getnep5asset":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
 						result = msq.GetNep5Asset(req);
 						break;
-					case "getallnep5assets":
+					case "getallnep5asset":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
-						result = msq.GetAllNep5Assets(req);
+						result = msq.GetAllNep5Asset(req);
 						break;
 					case "getnep5transfer":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
 						result = msq.GetNep5Transfer(req);
 						break;
-					case "getallnep5transfer":
+					case "getnep5count":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
-						result = msq.GetAllNep5Transfers(req);
+						result = msq.GetNep5Count(req);
 						break;
-					case "getnep5transferbyasset":
+					case "getnep5transfersbyasset":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
-						result = msq.GetNep5TransferByAsset(req);
+						result = msq.GetNep5TransfersByAsset(req);
 						break;
 
 					case "getnep5transferbytxid":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
 						result = msq.GetNep5TransferByTxid(req);
 						break;
-					case "getnotify":
-						result = msq.GetNotify(req);
+					case "getnep5allnep5assetofaddress":
+						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
+						result = msq.GetAllNep5AssetOfAddress(req);
 						break;
-					case "gettx":
 
-						result = msq.GetTx(req);
-						break;
 
 					case "getutxo":
 
 						result = msq.GetUTXO(req);
 						break;
-					case "getaddress":
 
-						result = msq.GetAddress(req);
+					case "getrankbyassetcount":
+
+						result = msq.GetRankByAssetCount(req);
 						break;
+					case "getrankbyasset":
+
+						result = msq.GetRankByAsset(req);
+						break;
+
 					case "getutxobyparameter":
                         if (req.@params.Count() == 1)
                         {
@@ -622,7 +629,7 @@ namespace NEO_Block_API.Controllers
                         findFliter = "{assetid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
                         result = mh.GetData(mongodbConnStr, mongodbDatabase, "NEP5asset", findFliter);
                         break;
-                    case "getallnep5asset":
+                    case "getallnep5assset":
                         findFliter = "{}";
                         result = mh.GetData(mongodbConnStr, mongodbDatabase, "NEP5asset", findFliter);
                         break;
@@ -644,7 +651,7 @@ namespace NEO_Block_API.Controllers
                         sortStr = "{}";
                         result = mh.GetDataPages(mongodbConnStr, mongodbDatabase, "NEP5transfer", sortStr, int.Parse(req.@params[0].ToString()), int.Parse(req.@params[1].ToString()));
                         break;
-                    case "getnep5transfersbyasset":
+                    case "getnep5transferssbyasset":
                         string str_asset = ((string)req.@params[0]).formatHexStr();
                         findFliter = "{asset:'" + str_asset + "'}";
                         //sortStr = "{'blockindex':1,'txid':1,'n':1}";
@@ -654,7 +661,7 @@ namespace NEO_Block_API.Controllers
                         else
                             result = mh.GetData(mongodbConnStr, mongodbDatabase, "NEP5transfer",findFliter);
                         break;
-                    case "getnep5count":
+                    case "getnepp5count":
                         findFliter = "{}";
                         if (req.@params.Count() == 2)
                         {
