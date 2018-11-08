@@ -60,7 +60,7 @@ namespace NEO_Block_API.lib
 
 
 
-				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime";
+				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime limit " + req.@params[0];
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -248,10 +248,10 @@ namespace NEO_Block_API.lib
 			using (MySqlConnection conn = new MySqlConnection(conf))
 			{
 				conn.Open();
-				//var addr = req.@params[0].ToString();
+		
 
 				{
-					string select = "select count(*) from asset where id='" + req.@params[0] + "'" ;
+					string select = "select count(*) from asset where id='" + req.@params[0].ToString() + "'" ;
 
 					JsonPRCresponse res = new JsonPRCresponse();
 					MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -391,8 +391,8 @@ namespace NEO_Block_API.lib
 				string select = "select version , id , type , name , amount , available , pprecision , owner , admin, issuer , expiration , frozen  from  asset where id='" + req.@params[0] + "'";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
-				
 
+				JArray bk = new JArray();
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlDataReader rdr = cmd.ExecuteReader();
 
@@ -412,51 +412,13 @@ namespace NEO_Block_API.lib
 					var rdata = (rdr["expiration"]).ToString();
 					var wdata = (rdr["frozen"]).ToString();
 					
+					
+					bk.Add(new JObject { { "version", adata }, { "type", tdata },{ "name", JArray.Parse(ndata) }, { "amount", xdata }, { "precision", pdata } , { "available", xdata }, { "owner", odata }, { "admin", fdata }, { "id", adata }});
 
-					JArray bk = new JArray {
-					new JObject    {
-										{"version",adata}
-								   },
-					new JObject    {
-										{"id",idata}
-								   },
-					new JObject    {
-										{"type",tdata}
-								   },
-					new JObject    {
-										{"name",ndata}
-								   },
-					new JObject    {
-										{"amount",xdata}
-								   },
-					new JObject    {
-										{"available",mdata}
-								   },
-					new JObject    {
-										{"precision",pdata}
-								   },
-					new JObject    {
-										{"owner",odata}
-								   },
-					new JObject    {
-										{"admin",fdata}
-								   },
-					new JObject    {
-										{"issuer",qdata}
-								   },
-					new JObject    {
-										{"expiration",rdata}
-								   },
-					new JObject    {
-										{"frozen",wdata}
-					               }
 
-							   };
-
-					res.result = bk;
 				}
 
-				return res.result;
+				return res.result = bk;
 
 			}
 		}
