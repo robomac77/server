@@ -58,7 +58,9 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime" ;
+
+
+				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime";
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -99,12 +101,12 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				//var addr = req.@params[0].ToString();
-				string select = "select a.addr, a.firstuse, a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where a.addr ='" + req.@params[0] + "' and a.firstuse = b.blockindex";
+
+				string select = "select a.addr, a.firstuse, a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where a.addr='" + req.@params[0] + "'"; // + "' and a.firstuse = b.blockindex";
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
-				//cmd.Parameters.AddWithValue("@addr", addr);
+		
 
 
 
@@ -122,9 +124,10 @@ namespace NEO_Block_API.lib
 					var bt= (rdr["blocktime"]).ToString();
 					var txid = (rdr["txid"]).ToString();
 
+					JObject dt = new JObject() { { "$date", bt } };
 
-					JObject j = new JObject() { { "txid", txid }, { "blockindex", l }, { "blocktime", bt } };
-					JObject m = new JObject() { { "txid", txid }, { "blockindex", l }, { "blocktime", bt } };
+					JObject j = new JObject() { { "txid", txid }, { "blockindex", l }, { "blocktime", dt } };
+					JObject m = new JObject() { { "txid", txid }, { "blockindex", l }, { "blocktime", dt } };
 
 					bk.Add(new JObject { { "addr", adata }, { "firstuse", j }, { "lastuse", m }, { "txcount", f }  });
 	
@@ -143,7 +146,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 				var addr = req.@params[0].ToString();
 
-				string select = "select a.txid,a.addr,a.blocktime,a.blockindex,b.type,b.vout,b.vin from  address_tx as a , tx as b where @addr = addr and a.txid = b.txid ";
+				string select = "select a.txid,a.addr,a.blocktime,a.blockindex,b.type,b.vout,b.vin from  address_tx as a , tx as b where @addr = addr and a.txid = b.txid limit " + req.@params[1];
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -168,8 +171,9 @@ namespace NEO_Block_API.lib
 					bk.Add(new JObject { { "addr", vdata } , { "txid", adata }, { "blockindex", bi }, { "blocktime", t } , { "type", type }, { "vout", JArray.Parse(vout)} , { "vin",JArray.Parse(vin)}});
 
 				}
-
-				return res.result = bk;
+				JArray c = new JArray() { };
+				c.Add(new JObject { { "count", JToken.Parse("10") }, { "list", bk } });
+				return res.result = c;
 
 			}
 		}
@@ -294,7 +298,7 @@ namespace NEO_Block_API.lib
 					{
 
 						var adata = (rdr["id"]).ToString();
-						var bl = (rdr["admin"]).ToString();
+						var bl = (rdr["amount"]).ToString();
 						var ad = (rdr["admin"]).ToString();
 						 
 					   bk.Add(new JObject { { "asset", adata }, { "balance", bl } , { "addr", ad }  });
@@ -343,46 +347,37 @@ namespace NEO_Block_API.lib
 
 			}
 		}
-		public JArray GetBalance(JsonRPCrequest req)
+		public JArray GetBalance(JsonRPCrequest req) // needs to be changed for the right balance data
 		{
 			using (MySqlConnection conn = new MySqlConnection(conf))
 			{
 				conn.Open();
-				var address = req.@params[0].ToString();
 
-				string select = "select id , balance from balance where address = @address";
+
+				string select = "select id , addr, asset , value , used from utxo where used = 0 and addr='" + req.@params[0] + "'";
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
-				cmd.Parameters.AddWithValue("@address", address);
+				JArray bk = new JArray();
+
 
 				MySqlDataReader rdr = cmd.ExecuteReader();
 				while (rdr.Read())
 				{
-
-					var adata = (rdr["address"]).ToString();
-					var ldata = (rdr["balance"]).ToString();
-				
-
-					JArray bk = new JArray {
-					new JObject    {
-										{"id",adata}
-								   },
-					new JObject    {
-										{"balance",ldata}
-								   }
+					var id = (rdr["id"]).ToString();
+					var ad = (rdr["addr"]).ToString();
+					var adata = (rdr["asset"]).ToString();
+					var ldata = (rdr["value"]).ToString();
+					var us = (rdr["used"]).ToString();
 					
 
-							   };
+					bk.Add(new JObject { { "rank", id }, { "addr", ad }, { "balance", ldata }, { "asset", adata }, { "used", us } });
 
-					res.result = bk;
 				}
 
-				return res.result;
-
+				return res.result = bk;
 			}
 		}
-
 
 		public JArray GetAsset(JsonRPCrequest req)
 		{
@@ -564,7 +559,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 			
-				string select = "select  size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from block limit 30";
+				string select = "select  size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from block limit " + req.@params[0];
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 				
@@ -928,7 +923,7 @@ namespace NEO_Block_API.lib
 
 				if (req.@params[2].ToString() == "")
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx limit 50";
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx limit "+ req.@params[0];
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -964,7 +959,7 @@ namespace NEO_Block_API.lib
 
 				else
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'";
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit "+ req.@params[0];
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 

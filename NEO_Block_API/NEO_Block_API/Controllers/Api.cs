@@ -171,24 +171,21 @@ namespace NEO_Block_API.Controllers
                         result = msq.GetAddress(req);
                         break;
 					case "getaddr":
-						//string addr = req.@params[0].ToString();
+
 
 						result = msq.GetAddr(req);
 						break;
 					case "getaddrs":
-						//string addr = req.@params[0].ToString();
 
 						result = msq.GetAddrs(req);
 						break;
 
 					case "getaddresstxs":
-						//string addr = req.@params[0].ToString();
-
+			
 						result = msq.GetAddressTxs(req);
 						break;
 					case "getaddrcount":
-						//string addr = req.@params[0].ToString();
-
+			
 						result = msq.GetAddrCount(req);
 						break;
 					case "getbalance":
