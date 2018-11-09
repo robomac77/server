@@ -141,6 +141,15 @@ namespace NEO_Block_API.Controllers
 					
 						result = msq.GetBlocks(req);
 						break;
+
+					case "gethashlist":
+
+						result = msq.GetHashlist(req);
+						break;
+					case "getallappchains":
+
+						result = msq.GetAllAppchains(req);
+						break;
 					case "getblockbysize":
 						//sortStr = "{index:-1}";
 						//result = msq.GetBlockBySize(req);
