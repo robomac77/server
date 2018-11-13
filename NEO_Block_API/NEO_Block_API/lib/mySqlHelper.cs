@@ -60,7 +60,7 @@ namespace NEO_Block_API.lib
 
 
 
-				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime limit " + req.@params[0];
+				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -423,6 +423,51 @@ namespace NEO_Block_API.lib
 			}
 		}
 
+
+		public JArray GetAppchain(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+
+
+				conn.Open();
+
+
+				string select = "select version , id , type , name , amount , available , pprecision , owner , admin, issuer , expiration , frozen  from  asset where id='" + req.@params[0] + "'";
+
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+				JArray bk = new JArray();
+				JsonPRCresponse res = new JsonPRCresponse();
+				MySqlDataReader rdr = cmd.ExecuteReader();
+
+				while (rdr.Read())
+				{
+
+					var adata = (rdr["version"]).ToString();
+					var idata = (rdr["id"]).ToString();
+					var tdata = (rdr["type"]).ToString();
+					var ndata = (rdr["name"]).ToString();
+					var xdata = (rdr["amount"]).ToString();
+					var mdata = (rdr["available"]).ToString();
+					var pdata = (rdr["pprecision"]).ToString();
+					var odata = (rdr["owner"]).ToString();
+					var fdata = (rdr["admin"]).ToString();
+					var qdata = (rdr["issuer"]).ToString();
+					var rdata = (rdr["expiration"]).ToString();
+					var wdata = (rdr["frozen"]).ToString();
+
+
+					bk.Add(new JObject { { "version", adata }, { "type", tdata }, { "name", JArray.Parse(ndata) }, { "amount", xdata }, { "precision", pdata }, { "available", xdata }, { "owner", odata }, { "admin", fdata }, { "id", adata } });
+
+
+				}
+
+				return res.result = bk;
+
+			}
+		}
+
 		public JArray GetAllAsset(JsonRPCrequest req)
 		{
 			
@@ -586,7 +631,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 			
-				string select = "select  size , version , previousblockhash , merkleroot , time , indexx , nonce, chainhash , nextconsensus , script ,tx  from block limit " + req.@params[0];
+				string select = "select  size , version , previousblockhash , merkleroot , time , indexx , nonce, chainhash , nextconsensus , script ,tx  from block limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 				

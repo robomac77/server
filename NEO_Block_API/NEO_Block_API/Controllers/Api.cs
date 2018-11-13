@@ -150,6 +150,10 @@ namespace NEO_Block_API.Controllers
 
 						result = msq.GetAllAppchains(req);
 						break;
+					case "getappchain":
+
+						result = msq.GetAppchain(req);
+						break;
 					case "getblockbysize":
 						//sortStr = "{index:-1}";
 						//result = msq.GetBlockBySize(req);
