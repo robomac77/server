@@ -994,9 +994,9 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				if (req.@params[2].ToString() == "")
+				if (req.@params[2].ToString() == null)
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx limit "+ req.@params[0];
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx limit " + req.@params[0];
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -1030,9 +1030,9 @@ namespace NEO_Block_API.lib
 
 				}
 
-				else
+				else if (req.@params[1].ToString() == null)
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit "+ req.@params[0];
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit " + req.@params[0];
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -1065,6 +1065,43 @@ namespace NEO_Block_API.lib
 					return res.result = bk;
 				}
 
+				else  //((req.@params[0].ToString() != null ) && (req.@params[1].ToString() != null) && (req.@params[2].ToString() != null))
+						{
+
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+
+
+					MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+
+					JsonPRCresponse res = new JsonPRCresponse();
+
+					MySqlDataReader rdr = cmd.ExecuteReader();
+
+					JArray bk = new JArray();
+					while (rdr.Read())
+					{
+
+						var adata = (rdr["txid"]).ToString();
+						var size = (rdr["size"]).ToString();
+						var type = (rdr["type"]).ToString();
+						var vs = (rdr["version"]).ToString();
+						var bdata = (rdr["blockheight"]).ToString();
+						var sdata = (rdr["sys_fee"]).ToString();
+						var vin = (rdr["vin"]).ToString();
+						var vout = (rdr["vout"]).ToString();
+
+
+
+						bk.Add(new JObject { { "txid", adata }, { "size", size }, { "type", type }, { "version", vs }, { "blockheight", bdata }, { "gas", sdata }, { "vin", JArray.Parse(vin) }, { "vout", JArray.Parse(vout) } });
+
+
+					}
+
+					return res.result = bk;
+
+				}
 
 			}
 
