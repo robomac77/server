@@ -474,7 +474,8 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 
-				string select = "select version , hash ,name ,owner, timestamp , seedlist , validators from appchainstate";
+				string select = "select version , hash ,name ,owner, timestamp , seedlist , validators from appchainstate"; // + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+				
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -513,7 +514,8 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 
-				string select = "select version , hash ,name ,owner, timestamp , seedlist , validators from appchainstate where hash = '" + req.@params[0] + "'";;
+				string select = "select version , hash , name , owner, timestamp , seedlist , validators from appchainstate where hash = '" + req.@params[0] + "'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
+
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -529,10 +531,7 @@ namespace NEO_Block_API.lib
 					var pdata = (rdr["owner"]).ToString();
 					var xdata = (rdr["timestamp"]).ToString();
 					var odata = (rdr["seedlist"]).ToString();
-					var o = (rdr["validators"]).ToString();
-
-
-
+					var o     = (rdr["validators"]).ToString();
 
 					bk.Add(new JObject { { "version", tdata }, { "hash", ndata }, { "name", mdata }, { "owner", pdata }, { "timestamp", xdata }, { "seedlist", JArray.Parse(odata) }, { "validators", JArray.Parse(o) } });
 				}
@@ -547,15 +546,12 @@ namespace NEO_Block_API.lib
 			using (MySqlConnection conn = new MySqlConnection(conf))
 			{
 
-
 				conn.Open();
 
-
-				string select = "select hashlist from hashlist";
-
+				string select = "select hashlist  from hashlist";
+			    
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
-
 
 				MySqlDataReader rdr = cmd.ExecuteReader();
 				JArray bk = new JArray();
@@ -666,35 +662,32 @@ namespace NEO_Block_API.lib
 		{
 			using (MySqlConnection conn = new MySqlConnection(conf))
 			{
+				conn.Open();
+
+				string select = "select version , hash , name , owner, timestamp , seedlist , validators from appchainstate where hash = '"+"0x"+ req.@params[0] + "'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
 
 
-					conn.Open();
-					var assetid = req.@params[0].ToString();
-
-					string select = "select totalsupply , name , symbol , decimals from nep5asset where assetid = @assetid";
-
-					JsonPRCresponse res = new JsonPRCresponse();
-					MySqlCommand cmd = new MySqlCommand(select, conn);
-					cmd.Parameters.AddWithValue("@assetid", assetid);
+				JsonPRCresponse res = new JsonPRCresponse();
+				MySqlCommand cmd = new MySqlCommand(select, conn);
 
 
-					MySqlDataReader rdr = cmd.ExecuteReader();
-					JArray bk = new JArray();
-					while (rdr.Read())
-					{
+				MySqlDataReader rdr = cmd.ExecuteReader();
+				JArray bk = new JArray();
+				while (rdr.Read())
+				{
+					var tdata = (rdr["version"]).ToString();
+					var ndata = (rdr["hash"]).ToString();
+					var mdata = (rdr["name"]).ToString();
+					var pdata = (rdr["owner"]).ToString();
+					var xdata = (rdr["timestamp"]).ToString();
+					var odata = (rdr["seedlist"]).ToString();
+					var o =     (rdr["validators"]).ToString();
 
-						var adata = (rdr["totalsupply"]).ToString();
-						var ndata = (rdr["name"]).ToString();
-						var sdata = (rdr["symbol"]).ToString();
-						var ddata = (rdr["decimals"]).ToString();
+					bk.Add(new JObject { { "version", tdata }, { "hash", ndata }, { "name", mdata }, { "owner", pdata }, { "timestamp", xdata }, { "seedlist", JArray.Parse(odata) }, { "validators", JArray.Parse(o) } });
+				}
 
+				return res.result = bk;
 
-
-						bk.Add(new JObject { {"totalsupply", adata }, {"name", ndata } , {"symbol", sdata } , {"decimals", ddata } });
-
-					}
-
-					return res.result = bk;
 
 			}
 		}

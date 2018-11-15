@@ -154,6 +154,10 @@ namespace NEO_Block_API.Controllers
 
 						result = msq.GetAppchain(req);
 						break;
+					case "getnep5asset":
+
+						result = msq.GetNep5Asset(req);
+						break;
 					case "getblockbysize":
 						//sortStr = "{index:-1}";
 						//result = msq.GetBlockBySize(req);
@@ -225,10 +229,7 @@ namespace NEO_Block_API.Controllers
                     case "getallasset":
 						result = msq.GetAllAsset(req);
 						break;
-                    case "getnep5asset":
-						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
-						result = msq.GetNep5Asset(req);
-						break;
+                   
 					case "getallnep5asset":
 						// findFliter = "{txid:'" + ((string)req.@params[0]).formatHexStr() + "'}";
 						result = msq.GetAllNep5Asset(req);
