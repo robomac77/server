@@ -424,50 +424,7 @@ namespace NEO_Block_API.lib
 		}
 
 
-		public JArray GetAppchain(JsonRPCrequest req)
-		{
-			using (MySqlConnection conn = new MySqlConnection(conf))
-			{
-
-
-				conn.Open();
-
-
-				string select = "select version , id , type , name , amount , available , pprecision , owner , admin, issuer , expiration , frozen  from  asset where id='" + req.@params[0] + "'";
-
-				MySqlCommand cmd = new MySqlCommand(select, conn);
-
-				JArray bk = new JArray();
-				JsonPRCresponse res = new JsonPRCresponse();
-				MySqlDataReader rdr = cmd.ExecuteReader();
-
-				while (rdr.Read())
-				{
-
-					var adata = (rdr["version"]).ToString();
-					var idata = (rdr["id"]).ToString();
-					var tdata = (rdr["type"]).ToString();
-					var ndata = (rdr["name"]).ToString();
-					var xdata = (rdr["amount"]).ToString();
-					var mdata = (rdr["available"]).ToString();
-					var pdata = (rdr["pprecision"]).ToString();
-					var odata = (rdr["owner"]).ToString();
-					var fdata = (rdr["admin"]).ToString();
-					var qdata = (rdr["issuer"]).ToString();
-					var rdata = (rdr["expiration"]).ToString();
-					var wdata = (rdr["frozen"]).ToString();
-
-
-					bk.Add(new JObject { { "version", adata }, { "type", tdata }, { "name", JArray.Parse(ndata) }, { "amount", xdata }, { "precision", pdata }, { "available", xdata }, { "owner", odata }, { "admin", fdata }, { "id", adata } });
-
-
-				}
-
-				return res.result = bk;
-
-			}
-		}
-
+		
 		public JArray GetAllAsset(JsonRPCrequest req)
 		{
 			
@@ -535,6 +492,45 @@ namespace NEO_Block_API.lib
 					var odata = (rdr["seedlist"]).ToString();
 					var o = (rdr["validators"]).ToString();
 				
+
+
+
+					bk.Add(new JObject { { "version", tdata }, { "hash", ndata }, { "name", mdata }, { "owner", pdata }, { "timestamp", xdata }, { "seedlist", JArray.Parse(odata) }, { "validators", JArray.Parse(o) } });
+				}
+
+				return res.result = bk;
+
+			}
+		}
+
+		public JArray GetAppchain(JsonRPCrequest req)
+		{
+
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+
+
+				conn.Open();
+
+
+				string select = "select version , hash ,name ,owner, timestamp , seedlist , validators from appchainstate where hash = '" + req.@params[0] + "'";;
+
+				JsonPRCresponse res = new JsonPRCresponse();
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+				MySqlDataReader rdr = cmd.ExecuteReader();
+				JArray bk = new JArray();
+				while (rdr.Read())
+				{
+					var tdata = (rdr["version"]).ToString();
+					var ndata = (rdr["hash"]).ToString();
+					var mdata = (rdr["name"]).ToString();
+					var pdata = (rdr["owner"]).ToString();
+					var xdata = (rdr["timestamp"]).ToString();
+					var odata = (rdr["seedlist"]).ToString();
+					var o = (rdr["validators"]).ToString();
+
 
 
 
