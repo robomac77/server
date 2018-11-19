@@ -243,6 +243,72 @@ namespace NEO_Block_API.lib
 			}
 		}
 
+		public JArray GetAppchainTxCount(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				conn.Open();
+				//var addr = req.@params[0].ToString();
+				if (req.@params[0].ToString() == "")
+				{
+					string select = "select count(*) from tx ";
+
+					JsonPRCresponse res = new JsonPRCresponse();
+					MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+					MySqlDataReader rdr = cmd.ExecuteReader();
+					while (rdr.Read())
+					{
+
+						var adata = (rdr["count(*)"]).ToString();
+
+
+
+						JArray bk = new JArray {
+					new JObject    {
+										{"txcount",adata}
+								   }
+
+							   };
+
+						res.result = bk;
+					}
+
+					return res.result;
+				}
+				else
+				{
+					string select = "select count(*) from tx_"+ req.@params[0]; //where type= + req.@params[0] + "'";
+
+					JsonPRCresponse res = new JsonPRCresponse();
+					MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+					MySqlDataReader rdr = cmd.ExecuteReader();
+					while (rdr.Read())
+					{
+
+						var adata = (rdr["count(*)"]).ToString();
+
+
+
+						JArray bk = new JArray {
+					new JObject    {
+										{"txcount",adata}
+								   }
+
+							   };
+
+						res.result = bk;
+					}
+
+					return res.result;
+				}
+
+			}
+		}
+
 		public JArray GetRankByAssetCount(JsonRPCrequest req)
 		{
 			using (MySqlConnection conn = new MySqlConnection(conf))
@@ -514,7 +580,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 
-				string select = "select version , hash , name , owner, timestamp , seedlist , validators from appchainstate where hash = '" + req.@params[0] + "'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
+				string select = "select version , hash , name , owner, timestamp , seedlist , validators from appchainstate where hash = '"+"0x"+req.@params[0]+"'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
 
 
 				JsonPRCresponse res = new JsonPRCresponse();
@@ -575,7 +641,7 @@ namespace NEO_Block_API.lib
 				JsonPRCresponse res = new JsonPRCresponse();
 				conn.Open();
 
-				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus, chainhash , script ,tx  from block  where indexx='" + req.@params[0] + "'";
+				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus, chainhash , script ,tx  from  block_"+ req.@params[0]+ " where hash='" + req.@params[0] + "'";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -623,7 +689,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 			
-				string select = "select  size , version , previousblockhash , merkleroot , time , indexx , nonce, chainhash , nextconsensus , script ,tx  from block limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+				string select = "select  size , version, hash , previousblockhash , merkleroot , time , indexx , nonce, chainhash , nextconsensus , script ,tx  from block limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 				
@@ -637,6 +703,7 @@ namespace NEO_Block_API.lib
 
 					var sdata = (rdr["size"]).ToString();
 					var adata = (rdr["version"]).ToString();
+					var hash = (rdr["hash"]).ToString();
 					var pdata = (rdr["previousblockhash"]).ToString();
 					var ind = (rdr["indexx"]).ToString();
 					var mdata = (rdr["merkleroot"]).ToString();
@@ -648,7 +715,52 @@ namespace NEO_Block_API.lib
 					var tx = (rdr["tx"]).ToString();
 
 
-					bk.Add(new JObject { { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "index", ind }, { "merkleroot", mdata }, { "time", tdata }, { "nonce", ndata }, { "nextconsensus", nc } , { "chainhash", ch }, { "script", s }, {"tx",JArray.Parse(tx) }});
+					bk.Add(new JObject { { "size", sdata }, { "version", adata }, { "hash", hash }, { "previousblockhash", pdata }, { "index", ind }, { "merkleroot", mdata }, { "time", tdata }, { "nonce", ndata }, { "nextconsensus", nc } , { "chainhash", ch }, { "script", s }, {"tx",JArray.Parse(tx) }});
+				}
+
+				return res.result = bk;
+
+
+
+			}
+		}
+
+
+		public JArray GetAppchainBlocks(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				JsonPRCresponse res = new JsonPRCresponse();
+				conn.Open();
+
+
+				string select = "select  size , version, hash , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx from block_" + req.@params[0] +" limit "+(int.Parse(req.@params[1].ToString()) * int.Parse(req.@params[2].ToString())) + ", " + int.Parse(req.@params[1].ToString()); 
+
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+				MySqlDataReader rdr = cmd.ExecuteReader();
+
+				JArray bk = new JArray();
+
+				while (rdr.Read())
+				{
+
+					var sdata = (rdr["size"]).ToString();
+					var adata = (rdr["version"]).ToString();
+					var hash = (rdr["hash"]).ToString();
+					var pdata = (rdr["previousblockhash"]).ToString();
+					var ind = (rdr["indexx"]).ToString();
+					var mdata = (rdr["merkleroot"]).ToString();
+					var tdata = (rdr["time"]).ToString();
+					var ndata = (rdr["nonce"]).ToString();
+					var nc = (rdr["nextconsensus"]).ToString();
+				
+					var s = (rdr["script"]).ToString();
+					var tx = (rdr["tx"]).ToString();
+
+
+					bk.Add(new JObject { { "size", sdata }, { "version", adata }, { "hash", hash }, { "previousblockhash", pdata }, { "index", ind }, { "merkleroot", mdata }, { "time", tdata }, { "nonce", ndata }, { "nextconsensus", nc }, { "script", s }, { "tx", JArray.Parse(tx) } });
 				}
 
 				return res.result = bk;
@@ -1097,6 +1209,127 @@ namespace NEO_Block_API.lib
 		}
 
 
+		public JArray GetAppchainRawTransactions(JsonRPCrequest req)  // needs a sorting by txtype miner , reg or issue
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				conn.Open();
+
+				if (req.@params[3].ToString() == "")
+				{
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_" + req.@params[0]+" limit " + (int.Parse(req.@params[1].ToString()) * int.Parse(req.@params[2].ToString())) + ", " + int.Parse(req.@params[1].ToString());
+
+
+					MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+
+					JsonPRCresponse res = new JsonPRCresponse();
+
+					MySqlDataReader rdr = cmd.ExecuteReader();
+
+					JArray bk = new JArray();
+					while (rdr.Read())
+					{
+
+						var adata = (rdr["txid"]).ToString();
+						var size = int.Parse((rdr["size"]).ToString());
+						var type = (rdr["type"]).ToString();
+						var vs = (rdr["version"]).ToString();
+						var bdata = (rdr["blockheight"]).ToString();
+						var sdata = int.Parse((rdr["sys_fee"]).ToString());
+						var vin = (rdr["vin"]).ToString();
+						var vout = (rdr["vout"]).ToString();
+
+
+
+						bk.Add(new JObject { { "txid", adata }, { "size", size }, { "type", type }, { "version", vs }, { "blockindex", bdata }, { "gas", sdata }, { "vin", vin }, { "vout", vout } }); //
+
+
+					}
+
+					return res.result = bk;
+
+				}
+
+				else if (req.@params[1].ToString() == null)
+				{
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit " + req.@params[0];
+
+					MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+
+					JsonPRCresponse res = new JsonPRCresponse();
+
+					MySqlDataReader rdr = cmd.ExecuteReader();
+
+					JArray bk = new JArray();
+					while (rdr.Read())
+					{
+
+						var adata = (rdr["txid"]).ToString();
+						var size = (rdr["size"]).ToString();
+						var type = (rdr["type"]).ToString();
+						var vs = (rdr["version"]).ToString();
+						var bdata = (rdr["blockheight"]).ToString();
+						var sdata = (rdr["sys_fee"]).ToString();
+						var vin = (rdr["vin"]).ToString();
+						var vout = (rdr["vout"]).ToString();
+
+
+
+						bk.Add(new JObject { { "txid", adata }, { "size", size }, { "type", type }, { "version", vs }, { "blockheight", bdata }, { "gas", sdata }, { "vin", JArray.Parse(vin) }, { "vout", JArray.Parse(vout) } });
+
+
+					}
+
+					return res.result = bk;
+				}
+
+				else  //((req.@params[0].ToString() != null ) && (req.@params[1].ToString() != null) && (req.@params[2].ToString() != null))
+				{
+
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+
+
+					MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+
+					JsonPRCresponse res = new JsonPRCresponse();
+
+					MySqlDataReader rdr = cmd.ExecuteReader();
+
+					JArray bk = new JArray();
+					while (rdr.Read())
+					{
+
+						var adata = (rdr["txid"]).ToString();
+						var size = (rdr["size"]).ToString();
+						var type = (rdr["type"]).ToString();
+						var vs = (rdr["version"]).ToString();
+						var bdata = (rdr["blockheight"]).ToString();
+						var sdata = (rdr["sys_fee"]).ToString();
+						var vin = (rdr["vin"]).ToString();
+						var vout = (rdr["vout"]).ToString();
+
+
+
+						bk.Add(new JObject { { "txid", adata }, { "size", size }, { "type", type }, { "version", vs }, { "blockheight", bdata }, { "gas", sdata }, { "vin", JArray.Parse(vin) }, { "vout", JArray.Parse(vout) } });
+
+
+					}
+
+					return res.result = bk;
+
+				}
+
+			}
+
+		}
+
+
 
 		public JArray GetUTXO(JsonRPCrequest req)
 		{
@@ -1222,6 +1455,44 @@ namespace NEO_Block_API.lib
 
 		}
 
+
+		public JArray GetAppchainBlockCount(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				conn.Open();
+
+
+				string select = "select count(*) from block_"+req.@params[0];
+
+				JsonPRCresponse res = new JsonPRCresponse();
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+
+				MySqlDataReader rdr = cmd.ExecuteReader();
+				while (rdr.Read())
+				{
+
+					var adata = (rdr["count(*)"]).ToString();
+
+
+
+					JArray bk = new JArray {
+					new JObject    {
+										{"blockcount",adata}
+								   }
+
+
+							   };
+
+					res.result = bk;
+				}
+
+				return res.result;
+
+			}
+		}
 
 		public JArray GetBlockTime(JsonRPCrequest req)
 		{

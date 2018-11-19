@@ -141,7 +141,23 @@ namespace NEO_Block_API.Controllers
 					
 						result = msq.GetBlocks(req);
 						break;
+					case "getappchainblocks":
 
+						result = msq.GetAppchainBlocks(req);
+						break;
+					case "getappchainblockcount":
+
+						result = msq.GetAppchainBlockCount(req);
+						break;
+					case "getappchaintxcount":
+
+						result = msq.GetAppchainTxCount(req);
+						break;
+
+					case "getappchainrawtransactions":
+
+						result = msq.GetAppchainRawTransactions(req);
+						break;
 					case "gethashlist":
 
 						result = msq.GetHashlist(req);
