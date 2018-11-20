@@ -186,7 +186,7 @@ namespace NEO_Block_API.lib
 				//var addr = req.@params[0].ToString();
 				if (req.@params[0].ToString() == "")
 				{
-					string select = "select count(*) from tx ";
+					string select = "select count(*) from tx_0000000000000000000000000000000000000000"; // inherently belongs to all appchains tx count
 
 					JsonPRCresponse res = new JsonPRCresponse();
 					MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -1134,9 +1134,9 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				if (req.@params[2].ToString() == null)
+				if (req.@params[2].ToString() == "")
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx limit " + req.@params[0];
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_0000000000000000000000000000000000000000 limit " + req.@params[0]; // inherently belongs to all app chain txs
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 
