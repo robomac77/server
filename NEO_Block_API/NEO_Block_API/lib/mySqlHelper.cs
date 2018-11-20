@@ -1215,7 +1215,7 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				if (req.@params[3].ToString() == "")
+				if (req.@params[2].ToString() == null)
 				{
 					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_" + req.@params[0]+" limit " + (int.Parse(req.@params[1].ToString()) * int.Parse(req.@params[2].ToString())) + ", " + int.Parse(req.@params[1].ToString());
 
@@ -1254,7 +1254,7 @@ namespace NEO_Block_API.lib
 
 				else if (req.@params[1].ToString() == null)
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit " + req.@params[0];
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_"+ req.@params[0]+ "where type='" + req.@params[2] + " limit " + req.@params[0];
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -1290,7 +1290,8 @@ namespace NEO_Block_API.lib
 				else  //((req.@params[0].ToString() != null ) && (req.@params[1].ToString() != null) && (req.@params[2].ToString() != null))
 				{
 
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx where type='" + req.@params[2] + "'limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_" + req.@params[0]+ " limit "+(int.Parse(req.@params[1].ToString()) * int.Parse(req.@params[2].ToString())) + ", " + int.Parse(req.@params[1].ToString()); 
+
 
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -1316,7 +1317,7 @@ namespace NEO_Block_API.lib
 
 
 
-						bk.Add(new JObject { { "txid", adata }, { "size", size }, { "type", type }, { "version", vs }, { "blockheight", bdata }, { "gas", sdata }, { "vin", JArray.Parse(vin) }, { "vout", JArray.Parse(vout) } });
+						bk.Add(new JObject { { "txid", adata }, { "size", size }, { "type", type }, { "version", vs }, { "blockindex", bdata }, { "gas", sdata }, { "vin", JArray.Parse(vin) }, { "vout", JArray.Parse(vout) } });
 
 
 					}
