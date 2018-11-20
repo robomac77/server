@@ -413,6 +413,45 @@ namespace NEO_Block_API.lib
 
 			}
 		}
+
+
+		public JArray GetAppchainAddrCount(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				conn.Open();
+
+
+				string select = "select count(*) from address_"+req.@params[0];
+
+				JsonPRCresponse res = new JsonPRCresponse();
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+
+				MySqlDataReader rdr = cmd.ExecuteReader();
+				while (rdr.Read())
+				{
+
+					var adata = (rdr["count(*)"]).ToString();
+
+
+
+					JArray bk = new JArray {
+					new JObject    {
+										{"addrcount",adata}
+								   }
+
+
+							   };
+
+					res.result = bk;
+				}
+
+				return res.result;
+
+			}
+		}
 		public JArray GetBalance(JsonRPCrequest req) // needs to be changed for the right balance data
 		{
 			using (MySqlConnection conn = new MySqlConnection(conf))

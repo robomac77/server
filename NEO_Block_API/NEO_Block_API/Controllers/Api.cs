@@ -149,6 +149,10 @@ namespace NEO_Block_API.Controllers
 
 						result = msq.GetAppchainBlockCount(req);
 						break;
+					case "getappchainaddrcount":
+
+						result = msq.GetAppchainAddrCount(req);
+						break;
 					case "getappchaintxcount":
 
 						result = msq.GetAppchainTxCount(req);
