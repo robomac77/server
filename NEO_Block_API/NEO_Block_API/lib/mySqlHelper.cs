@@ -383,7 +383,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 
-				string select = "select count(*) from address";
+				string select = "select count(*) from address_0000000000000000000000000000000000000000";
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -1464,7 +1464,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 		
-				string select = "SELECT indexx FROM block ORDER BY id DESC LIMIT 1"; //;
+				string select = "SELECT indexx FROM block_0000000000000000000000000000000000000000 ORDER BY id DESC LIMIT 1"; //;
 
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
