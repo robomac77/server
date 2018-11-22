@@ -1503,7 +1503,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 
-				string select = "select count(*) from block_"+req.@params[0];
+				string select = "select count(*) from block_"+req.@params[0]; // "select chainheight from chainheightlist where chainhash='" + req.@params[0] + "'"; 
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -1515,6 +1515,8 @@ namespace NEO_Block_API.lib
 				{
 
 					var adata = (rdr["count(*)"]).ToString();
+
+					//var cheight = (rdr["chainheight"]).ToString();
 
 
 
