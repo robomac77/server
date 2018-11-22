@@ -34,7 +34,7 @@ namespace NEO_Block_API
             }
             catch
             {
-                serverPort = 82;
+                serverPort = 59908;
             }
 
             return serverPort;            

@@ -720,6 +720,52 @@ namespace NEO_Block_API.lib
 			}
 		}
 
+		public JArray GetAppChainBlock(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				JsonPRCresponse res = new JsonPRCresponse();
+				conn.Open();
+
+				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from  block_0000000000000000000000000000000000000000  where indexx='" + req.@params[0] + "'";
+
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+
+				MySqlDataReader rdr = cmd.ExecuteReader();
+
+				JArray bk = new JArray();
+
+
+				while (rdr.Read())
+				{
+
+					var hash = (rdr["hash"]).ToString();
+					var sdata = (rdr["size"]).ToString();
+					var adata = (rdr["version"]).ToString();
+					var ind = (rdr["indexx"]).ToString();
+					var pdata = (rdr["previousblockhash"]).ToString();
+					var mdata = (rdr["merkleroot"]).ToString();
+					var tdata = (rdr["time"]).ToString();
+					var ndata = (rdr["nonce"]).ToString();
+					var nc = (rdr["nextconsensus"]).ToString();
+
+
+					var s = (rdr["script"]).ToString();
+					var tx = (rdr["tx"]).ToString();
+
+
+					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "block", ind }, { "nonce", ndata }, { "nextconsensus", nc }, { "script", JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
+				}
+
+
+				return res.result = bk;
+
+
+
+			}
+		}
+
 
 		public JArray GetBlocks(JsonRPCrequest req)
 		{
