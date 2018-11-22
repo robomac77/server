@@ -637,6 +637,7 @@ namespace NEO_Block_API.lib
 					var xdata = (rdr["timestamp"]).ToString();
 					var odata = (rdr["seedlist"]).ToString();
 					var o     = (rdr["validators"]).ToString();
+					
 
 					bk.Add(new JObject { { "version", tdata }, { "hash", ndata }, { "name", mdata }, { "owner", pdata }, { "timestamp", xdata }, { "seedlist", JArray.Parse(odata) }, { "validators", JArray.Parse(o) } });
 				}
@@ -680,7 +681,7 @@ namespace NEO_Block_API.lib
 				JsonPRCresponse res = new JsonPRCresponse();
 				conn.Open();
 
-				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus, chainhash , script ,tx  from  block_"+ req.@params[0]+ " where hash='" + req.@params[0] + "'";
+				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from  block_0000000000000000000000000000000000000000  where indexx='" + req.@params[0] + "'";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -702,13 +703,13 @@ namespace NEO_Block_API.lib
 					var tdata = (rdr["time"]).ToString();
 					var ndata = (rdr["nonce"]).ToString();
 					var nc = (rdr["nextconsensus"]).ToString();
-					var ch = (rdr["chainhash"]).ToString();
+				
 
 					var s = (rdr["script"]).ToString();
 					var tx = (rdr["tx"]).ToString();
 
 					
-					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "index", ind }, { "nonce", ndata }, { "nextconsensus", nc } , { "chainhash", ch }, { "script",JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
+					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "block", ind }, { "nonce", ndata }, { "nextconsensus", nc } , { "script",JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
 				}
 			
 
@@ -728,7 +729,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 
 			
-				string select = "select  size , version, hash , previousblockhash , merkleroot , time , indexx , nonce, chainhash , nextconsensus , script ,tx  from block limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+				string select = "select  size , version, hash , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from block_0000000000000000000000000000000000000000 limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 				
@@ -749,12 +750,11 @@ namespace NEO_Block_API.lib
 					var tdata = (rdr["time"]).ToString();
 					var ndata = (rdr["nonce"]).ToString();
 					var nc = (rdr["nextconsensus"]).ToString();
-					var ch = (rdr["chainhash"]).ToString();
 					var s = (rdr["script"]).ToString();
 					var tx = (rdr["tx"]).ToString();
 
 
-					bk.Add(new JObject { { "size", sdata }, { "version", adata }, { "hash", hash }, { "previousblockhash", pdata }, { "index", ind }, { "merkleroot", mdata }, { "time", tdata }, { "nonce", ndata }, { "nextconsensus", nc } , { "chainhash", ch }, { "script", s }, {"tx",JArray.Parse(tx) }});
+					bk.Add(new JObject { { "size", sdata }, { "version", adata }, { "hash", hash }, { "previousblockhash", pdata }, { "index", ind }, { "merkleroot", mdata }, { "time", tdata }, { "nonce", ndata }, { "nextconsensus", nc } , { "script", s }, {"tx",JArray.Parse(tx) }});
 				}
 
 				return res.result = bk;
@@ -1091,7 +1091,7 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				string select = "select txid ,size, type ,version, blockheight, sys_fee, net_fee, vin , vout from tx where txid='" + req.@params[0] + "'";
+				string select = "select txid ,size, type ,version, blockheight, sys_fee, net_fee, vin , vout from tx_0000000000000000000000000000000000000000 where txid = '" + req.@params[0] + "'";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 
