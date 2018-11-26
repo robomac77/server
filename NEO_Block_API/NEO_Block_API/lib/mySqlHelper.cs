@@ -611,7 +611,7 @@ namespace NEO_Block_API.lib
 
 		public JArray GetAppchain(JsonRPCrequest req)
 		{
-
+			
 			using (MySqlConnection conn = new MySqlConnection(conf))
 			{
 
@@ -628,6 +628,8 @@ namespace NEO_Block_API.lib
 
 				MySqlDataReader rdr = cmd.ExecuteReader();
 				JArray bk = new JArray();
+				List<JObject> vals = new List<JObject>();
+				JArray array = new JArray();
 				while (rdr.Read())
 				{
 					var tdata = (rdr["version"]).ToString();
@@ -637,7 +639,14 @@ namespace NEO_Block_API.lib
 					var xdata = (rdr["timestamp"]).ToString();
 					var odata = (rdr["seedlist"]).ToString();
 					var o     = (rdr["validators"]).ToString();
-					
+
+					//var split = o.Split(',');
+					//foreach (string s in split)
+					//{
+						//vals.Add(new JObject { s });
+
+					 //   array = JArray.FromObject(vals);
+					//}
 
 					bk.Add(new JObject { { "version", tdata }, { "hash", ndata }, { "name", mdata }, { "owner", pdata }, { "timestamp", xdata }, { "seedlist", JArray.Parse(odata) }, { "validators", JArray.Parse(o) } });
 				}
@@ -727,7 +736,7 @@ namespace NEO_Block_API.lib
 				JsonPRCresponse res = new JsonPRCresponse();
 				conn.Open();
 
-				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from  block_0000000000000000000000000000000000000000  where indexx='" + req.@params[0] + "'";
+				string select = "select hash, size , version , previousblockhash , merkleroot , time , indexx , nonce , nextconsensus , script ,tx  from  block_"+ req.@params[0] +" where indexx = '" + req.@params[1] + "'";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 
@@ -895,7 +904,7 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				string select = "select assetid from nep5asset ";
+				string select = "select assetid , totalsupply , name ,symbol ,decimals  from nep5asset_0000000000000000000000000000000000000000";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 			
@@ -907,10 +916,19 @@ namespace NEO_Block_API.lib
 				{
 
 					var adata = (rdr["assetid"]).ToString();
-				
+
+					var name = (rdr["name"]).ToString();
+
+					var ts = (rdr["totalsupply"]).ToString();
 
 
-					bk.Add(new JObject { {"assetid", adata } });
+					var sb = (rdr["symbol"]).ToString();
+
+					var cd = (rdr["decimals"]).ToString();
+
+
+
+					bk.Add(new JObject { {"assetid", adata } , { "totalsupply", ts }, { "name", name }, { "symbol", sb } , { "decimals", cd } });
 
 				}
 				return res.result = bk;
@@ -1163,6 +1181,49 @@ namespace NEO_Block_API.lib
 					
 
 					bk.Add(new JObject {{ "txid", tx } , { "size", sz } , { "type", tp } , { "version", vs } , { "blockindex", bh } , { "sys_fee", sf }, { "net_fee", nf }, { "vin", adata }, { "vout", vdata } });
+
+
+				}
+
+				return res.result = bk;
+
+
+			}
+
+		}
+
+		public JArray GetAppChainRawTransaction(JsonRPCrequest req)
+		{
+			using (MySqlConnection conn = new MySqlConnection(conf))
+			{
+				conn.Open();
+
+				string select = "select txid ,size, type ,version, blockheight, sys_fee, net_fee, vin , vout from tx_" + req.@params[0] +" where txid = '" + req.@params[1] + "'";
+
+				MySqlCommand cmd = new MySqlCommand(select, conn);
+
+				JsonPRCresponse res = new JsonPRCresponse();
+
+				MySqlDataReader rdr = cmd.ExecuteReader();
+				JArray bk = new JArray();
+				while (rdr.Read())
+				{
+
+
+					var tx = (rdr["txid"]).ToString();
+					var sz = (rdr["size"]).ToString();
+					var tp = (rdr["type"]).ToString();
+					var vs = (rdr["version"]).ToString();
+					var bh = (rdr["blockheight"]).ToString();
+					var sf = (rdr["sys_fee"]).ToString();
+					var nf = (rdr["net_fee"]).ToString();
+					var adata = (rdr["vin"]).ToString();
+					var vdata = (rdr["vout"]).ToString();
+
+
+
+
+					bk.Add(new JObject { { "txid", tx }, { "size", sz }, { "type", tp }, { "version", vs }, { "blockindex", bh }, { "sys_fee", sf }, { "net_fee", nf }, { "vin", adata }, { "vout", vdata } });
 
 
 				}
