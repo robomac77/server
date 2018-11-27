@@ -870,7 +870,7 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				string select = "select version , hash , name , owner, timestamp , seedlist , validators from appchainstate where hash = '"+"0x"+ req.@params[0] + "'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
+				string select = " select assetid, totalsupply, name, symbol,decimals from nep5asset_0000000000000000000000000000000000000000 where assetid = '" + "0x"+ req.@params[0] + "'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
 
 
 				JsonPRCresponse res = new JsonPRCresponse();
@@ -881,15 +881,20 @@ namespace NEO_Block_API.lib
 				JArray bk = new JArray();
 				while (rdr.Read())
 				{
-					var tdata = (rdr["version"]).ToString();
-					var ndata = (rdr["hash"]).ToString();
-					var mdata = (rdr["name"]).ToString();
-					var pdata = (rdr["owner"]).ToString();
-					var xdata = (rdr["timestamp"]).ToString();
-					var odata = (rdr["seedlist"]).ToString();
-					var o =     (rdr["validators"]).ToString();
+					var adata = (rdr["assetid"]).ToString();
 
-					bk.Add(new JObject { { "version", tdata }, { "hash", ndata }, { "name", mdata }, { "owner", pdata }, { "timestamp", xdata }, { "seedlist", JArray.Parse(odata) }, { "validators", JArray.Parse(o) } });
+					var name = (rdr["name"]).ToString();
+
+					var ts = (rdr["totalsupply"]).ToString();
+
+
+					var sb = (rdr["symbol"]).ToString();
+
+					var cd = (rdr["decimals"]).ToString();
+
+
+
+					bk.Add(new JObject { { "assetid", adata }, { "totalsupply", ts }, { "name", name }, { "symbol", sb }, { "decimals", cd } });
 				}
 
 				return res.result = bk;
