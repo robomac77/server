@@ -718,7 +718,7 @@ namespace NEO_Block_API.lib
 					var tx = (rdr["tx"]).ToString();
 
 					
-					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "block", ind }, { "nonce", ndata }, { "nextconsensus", nc } , { "script",JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
+					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "index", ind }, { "nonce", ndata }, { "nextconsensus", nc } , { "script",JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
 				}
 			
 
@@ -764,7 +764,7 @@ namespace NEO_Block_API.lib
 					var tx = (rdr["tx"]).ToString();
 
 
-					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "block", ind }, { "nonce", ndata }, { "nextconsensus", nc }, { "script", JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
+					bk.Add(new JObject { { "hash", hash }, { "size", sdata }, { "version", adata }, { "previousblockhash", pdata }, { "merkleroot", mdata }, { "time", tdata }, { "index", ind }, { "nonce", ndata }, { "nextconsensus", nc }, { "script", JObject.Parse(s) }, { "tx", JArray.Parse(tx) } });
 				}
 
 
