@@ -13,7 +13,7 @@ namespace NEO_Block_API.lib
 {
 	public class mySqlHelper
 	{
-		public static string conf = "database=block;server=106.15.200.244;user id=root;Password=jingmian@mysql;sslmode=None";
+		public static string conf = "database=block1;server=106.15.200.244;user id=root;Password=jingmian@mysql;sslmode=None";
 
 
 		public JArray GetAddress(JsonRPCrequest req)
@@ -23,7 +23,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 				var addr = req.@params[0].ToString();
 
-				string select = "select firstuse , lastuse , txcount from  address where addr = @addr";
+				string select = "select firstuse , lastuse , txcount from  address_0000000000000000000000000000000000000000 where addr = @addr";
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -60,7 +60,7 @@ namespace NEO_Block_API.lib
 
 
 
-				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address as a , address_tx as b where  a.firstuse = b.blocktime limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, from address_0000000000000000000000000000000000000000 as a limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0]; // string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address_0000000000000000000000000000000000000000 as a limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -950,7 +950,7 @@ namespace NEO_Block_API.lib
 				conn.Open();
 				var txid = req.@params[0].ToString();
 
-				string select = "select blockindex, n , asset , from , to , value from nep5transfer where txid = @txid";
+				string select = "select blockindex, n , asset , fromx , tox , value from nep5transfer_0000000000000000000000000000000000000000 where txid = @txid";
 
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 				cmd.Parameters.AddWithValue("@txid", txid);
@@ -964,8 +964,8 @@ namespace NEO_Block_API.lib
 					var bdata = (rdr["blockindex"]).ToString();
 					var ndata = (rdr["n"]).ToString();
 					var adata = (rdr["asset"]).ToString();
-					var fdata = (rdr["from"]).ToString();
-					var tdata = (rdr["to"]).ToString();
+					var fdata = (rdr["fromx"]).ToString();
+					var tdata = (rdr["tox"]).ToString();
 					var vdata = (rdr["value"]).ToString();
 
 					JArray bk = new JArray {
