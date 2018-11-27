@@ -60,7 +60,7 @@ namespace NEO_Block_API.lib
 
 
 
-				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, from address_0000000000000000000000000000000000000000 as a limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0]; // string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address_0000000000000000000000000000000000000000 as a limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+				string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address_0000000000000000000000000000000000000000 as a , address_tx_0000000000000000000000000000000000000000 as b where  a.firstuse = b.blocktime limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0]; // string select = "select a.addr, a.firstuse,a.lastuse, a.txcount, b.blockindex ,b.blocktime ,b.txid from address_0000000000000000000000000000000000000000 as a limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -1248,7 +1248,9 @@ namespace NEO_Block_API.lib
 
 				if (req.@params[2].ToString() == "")
 				{
-					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_0000000000000000000000000000000000000000 limit " + req.@params[0]; // inherently belongs to all app chain txs
+					string select = "select txid ,size, type ,version, blockheight, sys_fee, vin , vout from tx_0000000000000000000000000000000000000000 limit " + (int.Parse(req.@params[0].ToString()) * int.Parse(req.@params[1].ToString())) + ", " + req.@params[0];
+
+					// inherently belongs to all app chain txs
 
 					MySqlCommand cmd = new MySqlCommand(select, conn);
 
