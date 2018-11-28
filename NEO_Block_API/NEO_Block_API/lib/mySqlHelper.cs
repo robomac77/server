@@ -1051,9 +1051,9 @@ namespace NEO_Block_API.lib
 				conn.Open();
 		
 
-				string select = "select  id , asset , from , to , value from nep5transfer where txid'" + req.@params[0]+ "'";
+				string select = "select  id , asset , fromx , tox , value from nep5transfer_0000000000000000000000000000000000000000 where txid = '" + req.@params[0]+ "'";
 
-				MySqlCommand cmd = new MySqlCommand(select, conn);
+				MySqlCommand cmd = new MySqlCommand(select, conn); 
 			
 
 
@@ -1066,8 +1066,8 @@ namespace NEO_Block_API.lib
 
 					var idata = (rdr["id"]).ToString();
 					var adata = (rdr["asset"]).ToString();
-					var fdata = (rdr["from"]).ToString();
-					var tdata = (rdr["to"]).ToString();
+					var fdata = (rdr["fromx"]).ToString();
+					var tdata = (rdr["tox"]).ToString();
 					var vdata = (rdr["value"]).ToString();
 
 
