@@ -317,7 +317,7 @@ namespace NEO_Block_API.lib
 		
 
 				{
-					string select = "select count(*) from asset where id='" + req.@params[0].ToString() + "'" ;
+					string select = "select count(*) from nep5asset_0000000000000000000000000000000000000000 where id='" + req.@params[0].ToString() + "'" ;
 
 					JsonPRCresponse res = new JsonPRCresponse();
 					MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -353,7 +353,8 @@ namespace NEO_Block_API.lib
 				
 
 				{
-					string select = "select id, amount , admin from asset where id='" + req.@params[0] + "'";
+					string select = "select id, totalsupply , decimals from nep5asset_0000000000000000000000000000000000000000 where id='" + req.@params[0] + "'"; //					string select = "select id, amount , admin from nep5asset_0000000000000000000000000000000000000000 where id='" + req.@params[0] + "'";
+
 
 					JsonPRCresponse res = new JsonPRCresponse();
 					MySqlCommand cmd = new MySqlCommand(select, conn);
@@ -365,6 +366,11 @@ namespace NEO_Block_API.lib
 
 						var adata = (rdr["id"]).ToString();
 						var bl = (rdr["amount"]).ToString();
+
+						var ts = (rdr["totalsupply"]).ToString();
+						var de = (rdr["amount"]).ToString();
+
+
 						var ad = (rdr["admin"]).ToString();
 						 
 					   bk.Add(new JObject { { "asset", adata }, { "balance", bl } , { "addr", ad }  });
@@ -870,9 +876,7 @@ namespace NEO_Block_API.lib
 			{
 				conn.Open();
 
-				string select = " select assetid, totalsupply, name, symbol,decimals from nep5asset_0000000000000000000000000000000000000000 where assetid = '" + "0x"+ req.@params[0] + "'"; //string select = "select a.version , a.hash , a.name , a.owner, a.timestamp , a.seedlist , a.validators , b.(count(*).tx) , b.(count(*).indexx) , b.chainheight from appchainstate as a and "+ req.@params[0]+"_table"+" where hash = '" + req.@params[0] + "'";
-
-
+				string select = " select assetid , totalsupply , name , symbol , decimals from nep5asset_0000000000000000000000000000000000000000 where assetid = '" + req.@params[0] + "'"; 
 				JsonPRCresponse res = new JsonPRCresponse();
 				MySqlCommand cmd = new MySqlCommand(select, conn);
 
