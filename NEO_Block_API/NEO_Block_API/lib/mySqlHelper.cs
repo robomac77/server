@@ -895,7 +895,9 @@ namespace NEO_Block_API.lib
 					var sb = (rdr["symbol"]).ToString();
 
 					var cd = (rdr["decimals"]).ToString();
+					
 
+			
 
 
 					bk.Add(new JObject { { "assetid", adata }, { "totalsupply", ts }, { "name", name }, { "symbol", sb }, { "decimals", cd } });
